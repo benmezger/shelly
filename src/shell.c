@@ -76,48 +76,18 @@ int shell_execute(char **args){
             return (*builtin_func[i])(args);
         }
     }
-    
+
     // didn't match any builtin, lunch process.
     return shell_launch(args);
 }
 
 char *shell_read_line(void){
-    int bufsize = SHELL_RL_BUFSIZE;
-    int position = 0;
-    char *buffer = malloc(sizeof(char) * bufsize);  
-    int c;
+    char *line = NULL;
+    size_t bufsize = 0;
 
-    if (!buffer){
-        fprintf(stderr, "shell: allocation error\n");
-        exit(EXIT_FAILURE);
-    }
-
-    while (1){
-        // TODO: don't use getchar()
-        c = getchar();
-        
-        // if we hit EOF, replace with a null char and return.
-        if (c == EOF || c == '\n'){
-            buffer[position] = '\0';
-            return buffer;
-        }
-        else { // add character to existing string.
-            buffer[position] = c;
-        }
-        position++;
-        
-        // will the next char go outside our buffer?
-        if (position >= bufsize){
-            // buffer has exceeded, reallocate.
-            bufsize += SHELL_RL_BUFSIZE;
-            buffer = realloc(buffer, bufsize);
-            if (!buffer){
-                fprintf(stderr, "shell: allocation error\n");
-                exit(EXIT_FAILURE);
-            }
-        }
-    }
-}  
+    getline(&line, &bufsize, stdin);
+    return line;
+}
 
 void shell_loop(void){
     char *line;
@@ -127,6 +97,11 @@ void shell_loop(void){
     do {
         printf("> ");
         line = shell_read_line();
+        if (!*line){ /* EOF */
+            fprintf(stdout, "Bye.\n");
+            exit(EXIT_SUCCESS);
+        }
+
         args = shell_split_line(line);
         status = shell_execute(args);
 
