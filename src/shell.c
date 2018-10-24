@@ -41,14 +41,12 @@ int shell_execute(struct command_opt *cmdinfo){
     if (cmdinfo->name == NULL){
         return 1; // empty command
     }
-
-    /* TODO
+    int i;
     for (i=0; i < shell_num_builtins(); i++){
         if (strcmp(cmdinfo->name, builtin_str[i]) == 0){
-            return (*builtin_func[i])(cmdinfo->name);
+            return (*builtin_func[i])(cmdinfo->argv);
         }
     }
-    */
 
     // didn't match any builtin, lunch process.
     return shell_launch(cmdinfo);

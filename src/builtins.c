@@ -33,7 +33,7 @@ int shell_cd(char **args){
     return 1;
 }
 
-int shell_help(void){
+int shell_help(char **args){
     int i;
     printf("Ben Mezger's shell\n");
     printf("Type program name and arguments, and hit enter.\n");

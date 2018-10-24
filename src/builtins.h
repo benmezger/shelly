@@ -3,7 +3,7 @@
 
 int shell_cd(char **);
 
-int shell_help(void);
+int shell_help(char **);
 
 int shell_exit(char **);
 
