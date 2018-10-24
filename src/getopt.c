@@ -64,12 +64,10 @@ struct command_opt *shell_getopts(char *line){
 
     while (token != NULL){
         token = clean_str(token);
-        fprintf(stdout, "Token -> '%s'\n", token);
         argv[pos] = token;
         pos++;
 
         if (pos >= bufsize){
-            fprintf(stdout, "pos >= bufsize\n");
             bufsize += SHELL_TOK_BUFSIZE;
             argv = realloc(argv, bufsize * sizeof(char *));
             if (!argv){
