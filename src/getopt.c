@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <errno.h>
 
 #include "shell.h"
 #include "getopt.h"
@@ -71,7 +72,7 @@ struct command_opt *shell_getopts(char *line){
             bufsize += SHELL_TOK_BUFSIZE;
             argv = realloc(argv, bufsize * sizeof(char *));
             if (!argv){
-                fprintf(stderr, "shell: realloc error\n");
+                fprintf(stdout, "shell: reallocation error (%d: %s).\n", errno, strerror(errno));
                 exit(EXIT_FAILURE);
             }
         }

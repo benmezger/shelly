@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <errno.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -63,6 +63,10 @@ char *build_lprompt(void){
     char *curdir = NULL;
     curdir = getcwd(curdir, 0);
     if (curdir){
+        curdir = realloc(curdir, 2 * sizeof(char *));
+        if (!curdir){
+            fprintf(stdout, "shell: reallocation error (%d: %s).\n", errno, strerror(errno));
+        }
         return curdir;
     }
     return "> ";
