@@ -63,8 +63,8 @@ char *build_lprompt(void){
     char *curdir = NULL;
     curdir = getcwd(curdir, 0);
     if (curdir){
-        curdir = realloc(curdir, strlen(curdir) + (2 * sizeof(char *)));
-        strcat(curdir, " $ ");
+        curdir = realloc(curdir, strlen(curdir) + (3 * sizeof(char *)));
+        snprintf(curdir + strlen(curdir), 3 - strlen(curdir), " %s ", "$");
         if (!curdir){
             fprintf(stdout, "shell: reallocation error (%d: %s).\n", errno, strerror(errno));
         }
