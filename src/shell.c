@@ -69,6 +69,7 @@ char *build_lprompt(void){
         }
         return curdir;
     }
+    fprintf(stdout, "shell: error getting current directory. (%d: %s).\n", errno, strerror(errno));
     return "> ";
 }
 
