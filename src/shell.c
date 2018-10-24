@@ -61,6 +61,15 @@ ssize_t shell_read_line(char **line){
     return linelen;
 }
 
+char *build_lprompt(void){
+    char *curdir = NULL;
+    curdir = getcwd(curdir, 0);
+    if (curdir){
+        return curdir;
+    }
+    return "> ";
+}
+
 void shell_loop(void){
     char *line;
     int status;
@@ -69,7 +78,7 @@ void shell_loop(void){
     struct command_opt *cmdinfo;
 
     do {
-        printf("> ");
+        printf("%s $ ", build_lprompt());
         linelen = shell_read_line(&line);
         if (!*line){ /* EOF */
             fprintf(stdout, "Bye.\n");
