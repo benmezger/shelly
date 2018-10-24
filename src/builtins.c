@@ -12,9 +12,9 @@ int (*builtin_func[]) (char **) = {
 };
 
 char *builtin_str[] = {
-	"cd",
-	"help",
-	"exit"
+    "cd",
+    "help",
+    "exit"
 };
 
 int shell_num_builtins(){
@@ -33,7 +33,7 @@ int shell_cd(char **args){
     return 1;
 }
 
-int shell_help(char **args){
+int shell_help(void){
     int i;
     printf("Ben Mezger's shell\n");
     printf("Type program name and arguments, and hit enter.\n");
@@ -42,7 +42,7 @@ int shell_help(char **args){
     for (i=0; i < shell_num_builtins(); i++){
         printf(" %s\n", builtin_str[i]);
     }
-    
+
     printf("Use man command for information about other programs.\n");
     return 1;
 }

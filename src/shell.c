@@ -7,45 +7,16 @@
 
 #include "shell.h"
 #include "builtins.h"
+#include "getopt.h"
 
-char **shell_split_line(char *line){
-    int bufsize = SHELL_TOK_BUFSIZE;
-    int position = 0;
-    char **tokens = malloc(bufsize * sizeof(char *));
-    char *token;
-
-    if (!tokens){
-        fprintf(stderr, "shell: allocation error\n");
-        exit(EXIT_FAILURE);
-    }
-
-    token = strtok(line, SHELL_TOK_DELIM);
-    while (token != NULL){
-        tokens[position] = token;
-        position++;
-
-        if (position >= bufsize){
-            bufsize += SHELL_TOK_BUFSIZE;
-            tokens = realloc(tokens, bufsize * sizeof(char *));
-            if (!tokens){
-                fprintf(stderr, "shell: allocation error\n");
-                exit(EXIT_FAILURE);
-            }
-        }
-        token = strtok(NULL, SHELL_TOK_DELIM);
-    }
-    tokens[position] = NULL;
-    return tokens;
-}
-
-int shell_launch(char **args){
+int shell_launch(struct command_opt *cmdinfo){
     pid_t pid, wpid;
     int status;
 
     pid = fork(); // now we have two processes running concurrently
     if (pid == 0){
         // child process..
-        if (execvp(args[0], args) == -1){ // program name  + string of arguments
+        if (execvp(cmdinfo->name, cmdinfo->argv) == -1){ // program name  + string of arguments
             perror("shell");
         }
         exit(EXIT_FAILURE);
@@ -64,49 +35,57 @@ int shell_launch(char **args){
     return 1;
 }
 
-int shell_execute(char **args){
-    int i;
+int shell_execute(struct command_opt *cmdinfo){
+    // int i;
 
-    if (args[0] == NULL){
+    if (cmdinfo->name == NULL){
         return 1; // empty command
     }
 
+    /* TODO
     for (i=0; i < shell_num_builtins(); i++){
-        if (strcmp(args[0], builtin_str[i]) == 0){
-            return (*builtin_func[i])(args);
+        if (strcmp(cmdinfo->name, builtin_str[i]) == 0){
+            return (*builtin_func[i])(cmdinfo->name);
         }
     }
+    */
 
     // didn't match any builtin, lunch process.
-    return shell_launch(args);
+    return shell_launch(cmdinfo);
 }
 
-char *shell_read_line(void){
-    char *line = NULL;
+ssize_t shell_read_line(char **line){
     size_t bufsize = 0;
 
-    getline(&line, &bufsize, stdin);
-    return line;
+    ssize_t linelen = getline(line, &bufsize, stdin);
+    return linelen;
 }
 
 void shell_loop(void){
     char *line;
-    char **args;
     int status;
+
+    ssize_t linelen;
+    struct command_opt *cmdinfo;
 
     do {
         printf("> ");
-        line = shell_read_line();
+        linelen = shell_read_line(&line);
         if (!*line){ /* EOF */
             fprintf(stdout, "Bye.\n");
             exit(EXIT_SUCCESS);
         }
+        /* check if line is empty */
+        if ((line != NULL) && (line[0] != '\0') && linelen > 1){
+            cmdinfo = shell_getopts(line);
+            status = shell_execute(cmdinfo);
 
-        args = shell_split_line(line);
-        status = shell_execute(args);
-
-        free(line);
-        free(args);
+            free(cmdinfo);
+        }
+        else {
+            status = 1;
+        }
     } while (status);
+    free(line);
 }
 
