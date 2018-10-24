@@ -63,7 +63,8 @@ char *build_lprompt(void){
     char *curdir = NULL;
     curdir = getcwd(curdir, 0);
     if (curdir){
-        curdir = realloc(curdir, 2 * sizeof(char *));
+        curdir = realloc(curdir, strlen(curdir) + (2 * sizeof(char *)));
+        strcat(curdir, " $ ");
         if (!curdir){
             fprintf(stdout, "shell: reallocation error (%d: %s).\n", errno, strerror(errno));
         }
@@ -81,7 +82,7 @@ void shell_loop(void){
     struct command_opt *cmdinfo;
 
     do {
-        printf("%s $ ", build_lprompt());
+        printf("%s", build_lprompt());
         linelen = shell_read_line(&line);
         if (!*line){ /* EOF */
             fprintf(stdout, "Bye.\n");
