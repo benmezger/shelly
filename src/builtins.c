@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 #include "builtins.h"
-
 
 // array of function pointers (that takes and array of strings and returns and int)
 int (*builtin_func[]) (char **) = {
@@ -22,12 +26,19 @@ int shell_num_builtins(){
 }
 
 int shell_cd(char **args){
+    struct passwd *pw = getpwuid(getuid());
+    const char *homedir = pw->pw_dir;
+
     if (args[1] == NULL){
-        fprintf(stderr, "shell: expected arguments to \"cd\"\n");
+        const char *homedir = NULL;
+        homedir = pw->pw_dir;
+
+        if (chdir(homedir) != 0)
+            fprintf(stderr, "Error: Shell error (%d: %s)\n", errno, strerror(errno));
     }
     else {
         if (chdir(args[1]) != 0){
-            perror("shell");
+            fprintf(stderr, "Error: Shell error (%d: %s)\n", errno, strerror(errno));
         }
     }
     return 1;
