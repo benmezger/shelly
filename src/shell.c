@@ -8,6 +8,7 @@
 #include "shell.h"
 #include "builtins.h"
 #include "getopt.h"
+#include "input.h"
 
 int shell_launch(struct command_opt *cmdinfo){
     pid_t pid, wpid;
@@ -52,28 +53,6 @@ int shell_execute(struct command_opt *cmdinfo){
     return shell_launch(cmdinfo);
 }
 
-ssize_t shell_read_line(char **line){
-    size_t bufsize = 0;
-
-    ssize_t linelen = getline(line, &bufsize, stdin);
-    return linelen;
-}
-
-char *build_lprompt(void){
-    char *curdir = NULL;
-    curdir = getcwd(curdir, 0);
-    if (curdir){
-        curdir = realloc(curdir, strlen(curdir) + (3 * sizeof(char *)));
-        snprintf(curdir + strlen(curdir), 3 - strlen(curdir), " %s ", "$");
-        if (!curdir){
-            fprintf(stdout, "shell: reallocation error (%d: %s).\n", errno, strerror(errno));
-        }
-        return curdir;
-    }
-    fprintf(stdout, "shell: error getting current directory. (%d: %s).\n", errno, strerror(errno));
-    return "> ";
-}
-
 void shell_loop(void){
     char *line;
     int status;
@@ -82,7 +61,6 @@ void shell_loop(void){
     struct command_opt *cmdinfo;
 
     do {
-        printf("%s", build_lprompt());
         linelen = shell_read_line(&line);
         if (!*line){ /* EOF */
             fprintf(stdout, "Bye.\n");
