@@ -69,6 +69,7 @@ void shell_loop(void){
             status = shell_execute(cmdinfo);
 
             free(cmdinfo);
+            free(line);
         }
         else {
             status = 0;
