@@ -31,6 +31,9 @@ $(BUILD_DIR)/%.c.o: %.c
 clean:
 	$(RM) -r $(BUILD_DIR)
 
+run:
+	./$(BUILD_DIR)/$(TARGET_EXEC)
+
 -include $(DEPS)
 
 MKDIR_P ?= mkdir -p
