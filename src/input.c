@@ -9,5 +9,5 @@ ssize_t shell_read_line(char **line){
    *line = readline(build_lprompt());
    if (line && *line)
        add_history(*line);
-   return strlen(*line);
+    return *line == NULL ? CTRL_D : strlen(*line);
 }

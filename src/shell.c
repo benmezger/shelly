@@ -61,20 +61,18 @@ void shell_loop(void){
     struct command_opt *cmdinfo;
 
     do {
-        linelen = shell_read_line(&line);
-        if (!*line){ /* EOF */
-            fprintf(stdout, "Bye.\n");
-            exit(EXIT_SUCCESS);
-        }
-        /* check if line is empty */
-        if ((line != NULL) && (line[0] != '\0') && linelen > 1){
+        /* is EOF? */
+        linelen = shell_read_line(&line) < 0 ? 0 : 1;
+
+        if (linelen){
             cmdinfo = shell_getopts(line);
             status = shell_execute(cmdinfo);
 
             free(cmdinfo);
         }
         else {
-            status = 1;
+            status = 0;
+            fprintf(stdout, "\nBye.\n");
         }
     } while (status);
     free(line);
