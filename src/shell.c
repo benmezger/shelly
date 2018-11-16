@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+#include <readline/readline.h>
+
 #include "shell.h"
 #include "builtins.h"
 #include "getopt.h"
@@ -59,7 +61,7 @@ void shell_loop(void){
 
     ssize_t linelen;
     struct command_opt *cmdinfo;
-
+    rl_attempted_completion_function = path_file_completion;
     do {
         /* is EOF? */
         linelen = shell_read_line(&line) < 0 ? 0 : 1;

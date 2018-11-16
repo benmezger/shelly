@@ -7,4 +7,7 @@
 
 ssize_t shell_read_line(char **);
 
+char **path_file_completion(const char *, int, int);
+char **path_file_generator(const char *, int);
+
 #endif
