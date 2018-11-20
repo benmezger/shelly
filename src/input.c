@@ -51,7 +51,6 @@ char **path_file_completion(const char *text, int start, int end){
 char **path_file_generator(const char *text, int state){
     static int list_index;
     static int len;
-    char *name;
 
     if (!state){
         list_index = 0;
