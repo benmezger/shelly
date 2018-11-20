@@ -62,7 +62,7 @@ char **path_file_generator(const char *text, int state){
     struct node *cur = it->head->next; /* head if NULL/NULL */
     while (cur->next != NULL){
         if (strncmp((char *) cur->data, text, len) == 0){
-            return strdup(cur->data);
+            return (char **) strdup(cur->data);
         }
         cur = cur->next;
     }
