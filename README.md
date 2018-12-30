@@ -2,7 +2,6 @@
 
 ## Dependencies
 
-- libyaml
 - readline
 - GCC compiler
 
